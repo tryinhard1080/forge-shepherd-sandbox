@@ -80,3 +80,17 @@ export function highlightMatch(name, query) {
   if (query === '') return text;
   return text.replace(new RegExp(RegExp.escape(query), 'gi'), match => `[${match}]`);
 }
+
+// Returns the number shown on the cart badge: the sum of every line's qty.
+// An empty cart is 0. A qty that is negative or not an integer (1.5, NaN,
+// Infinity, a string, missing) throws a RangeError.
+export function cartCount(items) {
+  return items.reduce((count, item) => {
+    const qty = item.qty;
+    if (!Number.isInteger(qty)) {
+      throw new RangeError(`qty must be an integer, got ${String(qty)}`);
+    }
+    if (qty < 0) throw new RangeError(`qty must not be negative, got ${qty}`);
+    return count + qty;
+  }, 0);
+}
