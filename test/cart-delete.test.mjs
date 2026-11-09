@@ -38,4 +38,5 @@ test('deleteItem throws RangeError when no item has that name', () => {
 test('deleteItem matches the name exactly', () => {
   assert.throws(() => deleteItem([apple], 'Apple'), RangeError);
   assert.throws(() => deleteItem([apple], 'appl'), RangeError);
+  assert.throws(() => deleteItem([apple], 'apples'), RangeError);
 });
