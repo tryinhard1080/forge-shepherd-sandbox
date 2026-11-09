@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { total, addTax, parseQuantity, formatPrice, searchItems } from '../src/price.mjs';
+import { total, addTax, parseQuantity, formatPrice, searchItems, highlightMatch } from '../src/price.mjs';
 
 test('total sums price times quantity', () => {
   assert.equal(total([{ price: 2, qty: 3 }, { price: 5, qty: 1 }]), 11);
@@ -171,4 +171,36 @@ test('searchItems with an empty query returns every item', () => {
 
 test('searchItems throws RangeError for a non-string query', () => {
   assert.throws(() => searchItems(cart, null), RangeError);
+});
+
+test('highlightMatch wraps a case-insensitive match, keeping the name casing', () => {
+  assert.equal(highlightMatch('Fresh c++ book', 'C++'), 'Fresh [c++] book');
+});
+
+test('highlightMatch wraps every occurrence', () => {
+  assert.equal(highlightMatch('Apple and apple pie', 'APPLE'), '[Apple] and [apple] pie');
+});
+
+test('highlightMatch treats the query as literal text, not a pattern', () => {
+  assert.equal(highlightMatch('Beef 1/2 lb (fresh)', '1/2 lb (fresh)'), 'Beef [1/2 lb (fresh)]');
+  assert.equal(highlightMatch('Price $5.00 or 5x00', '5.00'), 'Price $[5.00] or 5x00');
+  assert.equal(highlightMatch('a.b*c?', '.*'), 'a.b*c?');
+  assert.equal(highlightMatch('Tea [green]', '[green]'), 'Tea [[green]]');
+  assert.equal(highlightMatch('a|b ab', 'a|b'), '[a|b] ab');
+  assert.equal(highlightMatch('x^y', '^y'), 'x[^y]');
+  assert.equal(highlightMatch('cost $5', '$5'), 'cost [$5]');
+  assert.equal(highlightMatch('a{2} aa', 'a{2}'), '[a{2}] aa');
+  assert.equal(highlightMatch('a\\b', '\\'), 'a[\\]b');
+});
+
+test('highlightMatch returns the name unchanged when nothing matches', () => {
+  assert.equal(highlightMatch('Milk', 'bread'), 'Milk');
+});
+
+test('highlightMatch returns the name unchanged for an empty query', () => {
+  assert.equal(highlightMatch('Milk', ''), 'Milk');
+});
+
+test('highlightMatch throws RangeError for a non-string query', () => {
+  assert.throws(() => highlightMatch('Milk', null), RangeError);
 });
