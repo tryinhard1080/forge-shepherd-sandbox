@@ -39,6 +39,18 @@ test('orderSummary subtotal minus discount equals total to the cent', () => {
   }
 });
 
+test('orderSummary rounds the discounted total and derives the discount from it', () => {
+  // 25% of 0.10 leaves 0.075: the total rounds half up to 0.08, discount is 0.02
+  assert.deepEqual(orderSummary([{ price: 0.1, qty: 1 }], 25),
+    { subtotal: 0.1, discount: 0.02, total: 0.08 });
+});
+
+test('orderSummary discounts the rounded subtotal, not the raw one', () => {
+  // raw 0.105 rounds to 0.11; half of 0.11 is 0.055 -> 0.06 (half of 0.105 would give 0.05)
+  assert.deepEqual(orderSummary([{ price: 0.105, qty: 1 }], 50),
+    { subtotal: 0.11, discount: 0.05, total: 0.06 });
+});
+
 test('orderSummary follows applyDiscount clamping for out-of-range percents', () => {
   const items = [{ price: 12.5, qty: 2 }];
   assert.deepEqual(orderSummary(items, 150), { subtotal: 25, discount: 25, total: 0 });
