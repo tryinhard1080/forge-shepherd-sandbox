@@ -186,6 +186,11 @@ test('highlightMatch treats the query as literal text, not a pattern', () => {
   assert.equal(highlightMatch('Price $5.00 or 5x00', '5.00'), 'Price $[5.00] or 5x00');
   assert.equal(highlightMatch('a.b*c?', '.*'), 'a.b*c?');
   assert.equal(highlightMatch('Tea [green]', '[green]'), 'Tea [[green]]');
+  assert.equal(highlightMatch('a|b ab', 'a|b'), '[a|b] ab');
+  assert.equal(highlightMatch('x^y', '^y'), 'x[^y]');
+  assert.equal(highlightMatch('cost $5', '$5'), 'cost [$5]');
+  assert.equal(highlightMatch('a{2} aa', 'a{2}'), '[a{2}] aa');
+  assert.equal(highlightMatch('a\\b', '\\'), 'a[\\]b');
 });
 
 test('highlightMatch returns the name unchanged when nothing matches', () => {
