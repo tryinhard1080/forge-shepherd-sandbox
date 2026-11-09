@@ -5,5 +5,6 @@
     "test": { "cmd": "npm test", "exit": 0 },
     "lint": { "cmd": "npm run lint", "exit": 0 }
   },
+  "change": { "second_opinion": "codex exec review --base \"$FORGE_BASE\" -c model_reasoning_effort=medium" },
   "shepherd": { "auto_merge": true, "budget_minutes": 60 }
 }
