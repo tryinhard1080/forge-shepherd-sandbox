@@ -37,7 +37,10 @@ export function parseQuantity(input) {
 // Rounds to the nearest cent (halves away from zero; toPrecision(15) strips
 // floating-point noise as in addTax). An amount that rounds to zero is "$0.00".
 export function formatPrice(amount) {
-  if (typeof amount !== 'number' || !Number.isFinite(amount)) {
+  if (typeof amount !== 'number') {
+    throw new RangeError(`amount must be a number, got ${typeof amount}`);
+  }
+  if (!Number.isFinite(amount)) {
     throw new RangeError(`amount must be a finite number, got ${amount}`);
   }
   const cents = Math.round(Number((Math.abs(amount) * 100).toPrecision(15)));

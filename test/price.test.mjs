@@ -134,3 +134,8 @@ test('formatPrice throws RangeError for non-finite or non-number amounts', () =>
   assert.throws(() => formatPrice(Infinity), RangeError);
   assert.throws(() => formatPrice('5'), RangeError);
 });
+
+test('formatPrice throws RangeError even for inputs that cannot become strings', () => {
+  assert.throws(() => formatPrice(Symbol('price')), RangeError);
+  assert.throws(() => formatPrice(Object.create(null)), RangeError);
+});
