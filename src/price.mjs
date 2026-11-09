@@ -48,3 +48,15 @@ export function formatPrice(amount) {
   const sign = amount < 0 && cents > 0 ? '-' : '';
   return `${sign}$${dollars}.${String(cents % 100).padStart(2, '0')}`;
 }
+
+// Returns the items whose name contains query as typed, ignoring case, in
+// their original order. The query is plain text, never a pattern: "c++" and
+// "1/2 lb (fresh)" match only names containing those exact characters.
+// An empty query matches every item.
+export function searchItems(items, query) {
+  if (typeof query !== 'string') {
+    throw new RangeError(`query must be a string, got ${typeof query}`);
+  }
+  const needle = query.toLowerCase();
+  return items.filter(item => String(item.name ?? '').toLowerCase().includes(needle));
+}

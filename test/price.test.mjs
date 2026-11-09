@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { total, addTax, parseQuantity, formatPrice } from '../src/price.mjs';
+import { total, addTax, parseQuantity, formatPrice, searchItems } from '../src/price.mjs';
 
 test('total sums price times quantity', () => {
   assert.equal(total([{ price: 2, qty: 3 }, { price: 5, qty: 1 }]), 11);
@@ -138,4 +138,37 @@ test('formatPrice throws RangeError for non-finite or non-number amounts', () =>
 test('formatPrice throws RangeError even for inputs that cannot become strings', () => {
   assert.throws(() => formatPrice(Symbol('price')), RangeError);
   assert.throws(() => formatPrice(Object.create(null)), RangeError);
+});
+
+const cart = [
+  { name: 'Butter 1/2 lb (fresh)', price: 4 },
+  { name: 'C++ Primer', price: 50 },
+  { name: 'Carrots', price: 2 },
+  { name: 'Apple.Juice', price: 3 },
+];
+
+test('searchItems matches name substrings ignoring case, keeping order', () => {
+  assert.deepEqual(searchItems(cart, 'CAR').map(i => i.name), ['Carrots']);
+  assert.deepEqual(searchItems(cart, 'c').map(i => i.name), ['C++ Primer', 'Carrots', 'Apple.Juice']);
+});
+
+test('searchItems matches regex metacharacters literally', () => {
+  assert.deepEqual(searchItems(cart, '1/2 lb (fresh)').map(i => i.name), ['Butter 1/2 lb (fresh)']);
+  assert.deepEqual(searchItems(cart, 'c++').map(i => i.name), ['C++ Primer']);
+  assert.deepEqual(searchItems(cart, 'e.j').map(i => i.name), ['Apple.Juice']);
+  assert.deepEqual(searchItems(cart, '.'), [cart[3]]);
+  assert.deepEqual(searchItems(cart, '(fresh'), [cart[0]]);
+  assert.deepEqual(searchItems(cart, '[a-z]'), []);
+});
+
+test('searchItems returns nothing when no name contains the query', () => {
+  assert.deepEqual(searchItems(cart, 'milk'), []);
+});
+
+test('searchItems with an empty query returns every item', () => {
+  assert.deepEqual(searchItems(cart, ''), cart);
+});
+
+test('searchItems throws RangeError for a non-string query', () => {
+  assert.throws(() => searchItems(cart, null), RangeError);
 });
