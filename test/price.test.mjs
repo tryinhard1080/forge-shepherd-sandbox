@@ -93,4 +93,8 @@ test('parseQuantity rejects a number above 999', () => {
 
 test('parseQuantity error message echoes the input', () => {
   assert.throws(() => parseQuantity('abc'), { message: /"abc"/ });
+  assert.throws(() => parseQuantity('  '), { message: /"  "/ });
+  assert.throws(() => parseQuantity('-1'), { message: /"-1"/ });
+  assert.throws(() => parseQuantity('2.5'), { message: /"2\.5"/ });
+  assert.throws(() => parseQuantity('1000'), { message: /"1000"/ });
 });

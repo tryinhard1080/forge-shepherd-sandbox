@@ -22,7 +22,7 @@ export function parseQuantity(input) {
     throw new RangeError(`quantity must be a string, got ${typeof input}`);
   }
   const text = input.trim();
-  if (text === '') throw new RangeError('quantity is empty');
+  if (text === '') throw new RangeError(`quantity is empty: "${input}"`);
   const match = /^(-?)(\d+)(?:\.(\d+))?$/.exec(text);
   if (!match) throw new RangeError(`quantity is not a number: "${input}"`);
   const [, sign, whole, fraction = ''] = match;
