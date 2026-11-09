@@ -23,6 +23,15 @@ test('wishlistTotal rounds to the cent, half cents up', () => {
   assert.equal(wishlistTotal([{ name: 'a', price: 0.1, qty: 1 }], 25), 0.08);
 });
 
+test('wishlistTotal rounds half cents up despite float noise', () => {
+  // subtotal: 1.005 * 100 = 100.49999999999999, must still round to 1.01
+  assert.equal(wishlistTotal([{ name: 'a', price: 1.005, qty: 1 }], 0), 1.01);
+  // discounted: 50% off 2.01 = 1.005 (same noise), must still round to 1.01
+  assert.equal(wishlistTotal([{ name: 'a', price: 2.01, qty: 1 }], 50), 1.01);
+  // 50% off 16.65 = 8.325 -> 8.33
+  assert.equal(wishlistTotal([{ name: 'a', price: 16.65, qty: 1 }], 50), 8.33);
+});
+
 test('wishlistTotal discounts the subtotal rounded to the cent, as checkout does', () => {
   // raw 0.105 rounds to 0.11; half of 0.11 is 0.055 -> 0.06 (half of raw 0.105 would give 0.05)
   assert.equal(wishlistTotal([{ name: 'a', price: 0.105, qty: 1 }], 50), 0.06);
