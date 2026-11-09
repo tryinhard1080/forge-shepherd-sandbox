@@ -1,3 +1,4 @@
 export function applyDiscount(amount, percent) {
-  return amount - amount * percent / 100;
+  const clamped = Math.min(100, Math.max(0, percent));
+  return amount - amount * clamped / 100;
 }
