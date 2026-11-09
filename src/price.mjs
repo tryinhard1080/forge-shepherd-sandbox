@@ -6,6 +6,13 @@ export function total(items) {
   }, 0);
 }
 
+// Rounds a dollar amount to the nearest cent (halves up). toPrecision(15)
+// strips floating-point noise (e.g. 1.005 * 100 = 100.49999999999999) so exact
+// half cents round up, as in addTax.
+export function roundCents(amount) {
+  return Math.round(Number((amount * 100).toPrecision(15))) / 100;
+}
+
 // Returns amount plus percent% tax, rounded to the nearest cent (halves up).
 // toPrecision(15) strips floating-point noise (e.g. 126.49999999999999 -> 126.5)
 // so exact half cents round up as expected.
@@ -47,4 +54,30 @@ export function formatPrice(amount) {
   const dollars = String(Math.floor(cents / 100)).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   const sign = amount < 0 && cents > 0 ? '-' : '';
   return `${sign}$${dollars}.${String(cents % 100).padStart(2, '0')}`;
+}
+
+// Returns the items whose name contains query as typed, ignoring case, in
+// their original order. The query is plain text, never a pattern: "c++" and
+// "1/2 lb (fresh)" match only names containing those exact characters.
+// An empty query matches every item.
+export function searchItems(items, query) {
+  if (typeof query !== 'string') {
+    throw new RangeError(`query must be a string, got ${typeof query}`);
+  }
+  const needle = query.toLowerCase();
+  return items.filter(item => String(item.name ?? '').toLowerCase().includes(needle));
+}
+
+// Returns the number shown on the cart badge: the sum of every line's qty.
+// An empty cart is 0. A qty that is negative or not an integer (1.5, NaN,
+// Infinity, a string, missing) throws a RangeError.
+export function cartCount(items) {
+  return items.reduce((count, item) => {
+    const qty = item.qty;
+    if (!Number.isInteger(qty)) {
+      throw new RangeError(`qty must be an integer, got ${String(qty)}`);
+    }
+    if (qty < 0) throw new RangeError(`qty must not be negative, got ${qty}`);
+    return count + qty;
+  }, 0);
 }
