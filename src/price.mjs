@@ -67,3 +67,16 @@ export function searchItems(items, query) {
   const needle = query.toLowerCase();
   return items.filter(item => String(item.name ?? '').toLowerCase().includes(needle));
 }
+
+// Returns name with every case-insensitive occurrence of query wrapped in
+// [ and ], keeping the name's own casing: ("Fresh c++ book", "C++") ->
+// "Fresh [c++] book". The query is plain text, never a pattern; it is escaped
+// with the built-in RegExp.escape. An empty query returns name unchanged.
+export function highlightMatch(name, query) {
+  if (typeof query !== 'string') {
+    throw new RangeError(`query must be a string, got ${typeof query}`);
+  }
+  const text = String(name ?? '');
+  if (query === '') return text;
+  return text.replace(new RegExp(RegExp.escape(query), 'gi'), match => `[${match}]`);
+}
