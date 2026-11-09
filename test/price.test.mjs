@@ -17,3 +17,7 @@ test('total throws RangeError for a negative price', () => {
 test('total still accepts zero price and zero quantity', () => {
   assert.equal(total([{ price: 0, qty: 3 }, { price: 5, qty: 0 }]), 0);
 });
+
+test('total throws RangeError when both price and quantity are negative', () => {
+  assert.throws(() => total([{ price: -2, qty: -1 }]), RangeError);
+});
