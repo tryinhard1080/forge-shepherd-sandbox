@@ -32,3 +32,19 @@ export function parseQuantity(input) {
   if (qty > 999) throw new RangeError(`quantity must be at most 999: "${input}"`);
   return qty;
 }
+
+// Formats a dollar amount for checkout: "$1,234.50", "$0.05", "-$3.00".
+// Rounds to the nearest cent (halves away from zero; toPrecision(15) strips
+// floating-point noise as in addTax). An amount that rounds to zero is "$0.00".
+export function formatPrice(amount) {
+  if (typeof amount !== 'number') {
+    throw new RangeError(`amount must be a number, got ${typeof amount}`);
+  }
+  if (!Number.isFinite(amount)) {
+    throw new RangeError(`amount must be a finite number, got ${amount}`);
+  }
+  const cents = Math.round(Number((Math.abs(amount) * 100).toPrecision(15)));
+  const dollars = String(Math.floor(cents / 100)).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const sign = amount < 0 && cents > 0 ? '-' : '';
+  return `${sign}$${dollars}.${String(cents % 100).padStart(2, '0')}`;
+}

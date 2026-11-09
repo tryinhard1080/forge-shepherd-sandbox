@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { total, addTax, parseQuantity } from '../src/price.mjs';
+import { total, addTax, parseQuantity, formatPrice } from '../src/price.mjs';
 
 test('total sums price times quantity', () => {
   assert.equal(total([{ price: 2, qty: 3 }, { price: 5, qty: 1 }]), 11);
@@ -97,4 +97,45 @@ test('parseQuantity error message echoes the input', () => {
   assert.throws(() => parseQuantity('-1'), { message: /"-1"/ });
   assert.throws(() => parseQuantity('2.5'), { message: /"2\.5"/ });
   assert.throws(() => parseQuantity('1000'), { message: /"1000"/ });
+});
+
+test('formatPrice shows dollars with thousands separators and two decimals', () => {
+  assert.equal(formatPrice(1234.5), '$1,234.50');
+  assert.equal(formatPrice(1234567.89), '$1,234,567.89');
+  assert.equal(formatPrice(999), '$999.00');
+  assert.equal(formatPrice(1000), '$1,000.00');
+});
+
+test('formatPrice shows small amounts with a leading zero', () => {
+  assert.equal(formatPrice(0.05), '$0.05');
+  assert.equal(formatPrice(0), '$0.00');
+});
+
+test('formatPrice puts the minus before the dollar sign for refunds', () => {
+  assert.equal(formatPrice(-3), '-$3.00');
+  assert.equal(formatPrice(-1234.5), '-$1,234.50');
+});
+
+test('formatPrice rounds to the nearest cent', () => {
+  assert.equal(formatPrice(2.344), '$2.34');
+  assert.equal(formatPrice(2.346), '$2.35');
+  assert.equal(formatPrice(1.005), '$1.01');
+  assert.equal(formatPrice(-1.005), '-$1.01');
+  assert.equal(formatPrice(999.999), '$1,000.00');
+});
+
+test('formatPrice never shows a negative zero', () => {
+  assert.equal(formatPrice(-0), '$0.00');
+  assert.equal(formatPrice(-0.004), '$0.00');
+});
+
+test('formatPrice throws RangeError for non-finite or non-number amounts', () => {
+  assert.throws(() => formatPrice(NaN), RangeError);
+  assert.throws(() => formatPrice(Infinity), RangeError);
+  assert.throws(() => formatPrice('5'), RangeError);
+});
+
+test('formatPrice throws RangeError even for inputs that cannot become strings', () => {
+  assert.throws(() => formatPrice(Symbol('price')), RangeError);
+  assert.throws(() => formatPrice(Object.create(null)), RangeError);
 });
