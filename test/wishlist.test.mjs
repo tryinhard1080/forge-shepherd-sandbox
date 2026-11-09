@@ -23,6 +23,13 @@ test('addToWishlist rejects a duplicate name with a RangeError', () => {
   assert.deepEqual(list, [mug]);
 });
 
+test('addToWishlist finds a duplicate anywhere in the list', () => {
+  const pen = { name: 'pen', price: 2, qty: 1 };
+  for (const name of ['mug', 'lamp', 'pen']) {
+    assert.throws(() => addToWishlist([mug, lamp, pen], { name, price: 1, qty: 1 }), RangeError, name);
+  }
+});
+
 test('addToWishlist treats names that differ only in case as different', () => {
   assert.deepEqual(addToWishlist([mug], { name: 'Mug', price: 8, qty: 1 }).length, 2);
 });
