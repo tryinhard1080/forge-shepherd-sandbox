@@ -6,6 +6,13 @@ export function total(items) {
   }, 0);
 }
 
+// Rounds a dollar amount to the nearest cent (halves up). toPrecision(15)
+// strips floating-point noise (e.g. 1.005 * 100 = 100.49999999999999) so exact
+// half cents round up, as in addTax.
+export function roundCents(amount) {
+  return Math.round(Number((amount * 100).toPrecision(15))) / 100;
+}
+
 // Returns amount plus percent% tax, rounded to the nearest cent (halves up).
 // toPrecision(15) strips floating-point noise (e.g. 126.49999999999999 -> 126.5)
 // so exact half cents round up as expected.
