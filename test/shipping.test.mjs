@@ -20,11 +20,19 @@ test('estimateShipping adds $1.50 for each further started kg', () => {
 test('estimateShipping rounds the result to the cent', () => {
   // 4.99 + 1.5 * 13 = 24.490000000000002 in floating point
   assert.equal(estimateShipping(14), 24.49);
-  assert.equal(estimateShipping(19), 31.99);
-  assert.equal(estimateShipping(19.99), 33.49);
+  assert.equal(estimateShipping(14.99), 25.99);
 });
 
-test('estimateShipping is free at 20 kg or more', () => {
+test('estimateShipping still charges just below 15 kg', () => {
+  assert.equal(estimateShipping(14.5), 25.99);
+  assert.equal(estimateShipping(14.999), 25.99);
+});
+
+test('estimateShipping is free at 15 kg or more', () => {
+  assert.equal(estimateShipping(15), 0);
+  assert.equal(estimateShipping(15.01), 0);
+  assert.equal(estimateShipping(19), 0);
+  assert.equal(estimateShipping(19.99), 0);
   assert.equal(estimateShipping(20), 0);
   assert.equal(estimateShipping(20.5), 0);
   assert.equal(estimateShipping(1000), 0);
