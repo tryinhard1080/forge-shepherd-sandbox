@@ -29,6 +29,7 @@ test('characters other than letters and digits are a RangeError that names the f
   assert.throws(() => normalizeCoupon('café10'), { name: 'RangeError', message: /"é"/ });
   assert.throws(() => normalizeCoupon('straße'), { name: 'RangeError', message: /"ß"/ });
   assert.throws(() => normalizeCoupon('ab😀cd'), { name: 'RangeError', message: /"😀"/ });
+  assert.throws(() => normalizeCoupon('a-bc_def'), { name: 'RangeError', message: /found "-"$/ });
 });
 
 test('a code that is not a string is a RangeError', () => {
