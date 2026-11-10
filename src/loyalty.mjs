@@ -3,8 +3,11 @@
 // is negative or not a finite number.
 export function loyaltyPoints(orderTotal) {
   if (!Number.isFinite(orderTotal) || orderTotal < 0) {
-    throw new RangeError(`order total must be a finite number >= 0, got ${String(orderTotal)}`);
+    // typeof, not String(): String() itself throws for some objects and symbols.
+    const got = typeof orderTotal === 'number' ? orderTotal : typeof orderTotal;
+    throw new RangeError(`order total must be a finite number >= 0, got ${got}`);
   }
-  const points = Math.floor(orderTotal);
+  // Math.max turns -0 into 0.
+  const points = Math.max(0, Math.floor(orderTotal));
   return orderTotal >= 100 ? points * 2 : points;
 }

@@ -33,3 +33,16 @@ test('loyaltyPoints throws RangeError for a total that is not a finite number', 
     assert.throws(() => loyaltyPoints(bad), RangeError, `expected RangeError for ${String(bad)}`);
   }
 });
+
+test('loyaltyPoints throws RangeError even for values that cannot be stringified', () => {
+  assert.throws(() => loyaltyPoints(Object.create(null)), RangeError);
+  assert.throws(() => loyaltyPoints(Symbol('total')), RangeError);
+});
+
+test('loyaltyPoints returns 0, not -0, for a total of -0', () => {
+  assert.equal(loyaltyPoints(-0), 0);
+});
+
+test('loyaltyPoints does not double just below $100', () => {
+  assert.equal(loyaltyPoints(99.999), 99);
+});
