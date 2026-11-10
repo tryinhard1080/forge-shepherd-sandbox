@@ -6,6 +6,10 @@ Every function exported from `src/`, one line each.
 
 - `deleteItem(...)`
 
+## src/coupon.mjs
+
+- `normalizeCoupon(...)`
+
 ## src/discount.mjs
 
 - `applyDiscount(...)`
