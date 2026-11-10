@@ -22,6 +22,10 @@ Every function exported from `src/`, one line each.
 - `highlightMatch(...)`
 - `cartCount(...)`
 
+## src/shipping.mjs
+
+- `estimateShipping(...)`
+
 ## src/summary.mjs
 
 - `orderSummary(...)`
