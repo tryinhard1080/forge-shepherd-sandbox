@@ -36,3 +36,8 @@ test('estimateShipping throws a RangeError for a weight that is not a positive f
   }
   assert.throws(() => estimateShipping(), RangeError);
 });
+
+test('estimateShipping throws a RangeError even for a value that cannot be turned into a string', () => {
+  assert.throws(() => estimateShipping(Object.create(null)), RangeError);
+  assert.throws(() => estimateShipping({ toString() { throw new Error('boom'); } }), RangeError);
+});

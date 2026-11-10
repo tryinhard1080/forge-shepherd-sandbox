@@ -6,8 +6,11 @@ import { roundCents } from './price.mjs';
 // The result is rounded to the cent. A weight that is not a positive finite
 // number (0, negative, NaN, Infinity, a string, missing) throws a RangeError.
 export function estimateShipping(weightKg) {
-  if (typeof weightKg !== 'number' || !Number.isFinite(weightKg) || weightKg <= 0) {
-    throw new RangeError(`weight must be a positive finite number of kg, got ${String(weightKg)}`);
+  if (typeof weightKg !== 'number') {
+    throw new RangeError(`weight must be a number, got ${typeof weightKg}`);
+  }
+  if (!Number.isFinite(weightKg) || weightKg <= 0) {
+    throw new RangeError(`weight must be a positive finite number of kg, got ${weightKg}`);
   }
   if (weightKg >= 20) return 0;
   const extraKg = Math.max(0, Math.ceil(weightKg - 1));
