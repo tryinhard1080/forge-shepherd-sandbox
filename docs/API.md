@@ -11,6 +11,10 @@ Every function exported from `src/`, one line each.
 - `applyDiscount(...)`
 - `bulkPrice(...)`
 
+## src/gift.mjs
+
+- `giftWrapFee(...)`
+
 ## src/loyalty.mjs
 
 - `loyaltyPoints(...)`
